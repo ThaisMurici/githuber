@@ -16,6 +16,7 @@ export default class Welcome extends Component {
   state = {
     username: '',
     loading: false,
+    error: false,
   };
 
   checkUserExistence = async (username) => {
@@ -39,19 +40,20 @@ export default class Welcome extends Component {
 
       navigation.navigate('Repositories');
     } catch (error) {
-      this.setState({ loading: false });
-      console.tron.log('User does not exist.');
+      this.setState({ loading: false, error: true });
     }
   };
 
   render() {
-    const { username, loading } = this.state;
+    const { username, loading, error } = this.state;
 
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <Text style={styles.title}>Welcome!</Text>
         <Text style={styles.text}>Please, provide your GitHub username to continue.</Text>
+
+        {error && <Text style={styles.error}>User does not exist.</Text>}
 
         <View style={styles.form}>
           <TextInput

@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StatusBar, AsyncStorage,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  AsyncStorage,
+  ActivityIndicator,
 } from 'react-native';
 
 import styles from './styles';
@@ -9,6 +15,7 @@ import api from '~/services/api';
 export default class Welcome extends Component {
   state = {
     username: '',
+    loading: false,
   };
 
   checkUserExistence = async (username) => {
@@ -24,18 +31,21 @@ export default class Welcome extends Component {
     const { username } = this.state;
     const { navigation } = this.props;
 
+    this.setState({ loading: true });
+
     try {
       await this.checkUserExistence(username);
       await this.saveUser(username);
 
       navigation.navigate('Repositories');
     } catch (error) {
+      this.setState({ loading: false });
       console.tron.log('User does not exist.');
     }
   };
 
   render() {
-    const { username } = this.state;
+    const { username, loading } = this.state;
 
     return (
       <View style={styles.container}>
@@ -55,7 +65,11 @@ export default class Welcome extends Component {
           />
 
           <TouchableOpacity style={styles.button} onPress={this.signIn}>
-            <Text style={styles.buttonText}>Proceed</Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Proceed</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
